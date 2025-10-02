@@ -501,7 +501,7 @@
         <!-- LEAGUE DATA LOOKUP SECTION -->
         <section class="league-lookup">
             <h3>League Data Lookup</h3>
-            <p>Enter a summoner name to see their level and top champions!</p>
+            <p>Enter a Riot ID (Game Name + Tagline) to see their top champions!</p>
             
             <!-- Lookup message container for success/error messages -->
             <div id="lookup-message" class="lookup-message" style="display: none;"></div>
@@ -509,8 +509,12 @@
             <div class="lookup-form-container">
                 <!-- Summoner lookup form -->
                 <div class="form-group">
-                    <label for="summoner-name">Summoner Name</label>
-                    <input type="text" id="summoner-name" name="summoner-name" placeholder="Enter summoner name" required>
+                    <label for="summoner-name">Riot ID (Game Name)</label>
+                    <input type="text" id="summoner-name" name="summoner-name" placeholder="Enter game name" required>
+                </div>
+                <div class="form-group">
+                    <label for="tag-line">Tagline</label>
+                    <input type="text" id="tag-line" name="tag-line" placeholder="Enter tagline (e.g., NA1)" value="NA1" required>
                 </div>
                 <div class="form-group">
                     <label for="region">Region</label>
@@ -1028,16 +1032,18 @@
     document.addEventListener('DOMContentLoaded', function() {
         const lookupBtn = document.getElementById('lookup-btn');
         const summonerNameInput = document.getElementById('summoner-name');
+        const tagLineInput = document.getElementById('tag-line');
         const regionSelect = document.getElementById('region');
         
         lookupBtn.addEventListener('click', async function() {
             const summonerName = summonerNameInput.value.trim();
+            const tagLine = tagLineInput.value.trim();
             const region = regionSelect.value;
             const messageDiv = document.getElementById('lookup-message');
             const resultsDiv = document.getElementById('summoner-results');
             
-            if (!summonerName) {
-                showMessage('Please enter a summoner name', 'error');
+            if (!summonerName || !tagLine) {
+                showMessage('Please enter both game name and tagline', 'error');
                 return;
             }
             
@@ -1055,6 +1061,7 @@
                     },
                     body: JSON.stringify({
                         summonerName: summonerName,
+                        tagLine: tagLine,
                         region: region
                     })
                 });
@@ -1077,10 +1084,12 @@
         });
         
         // Enter key support
-        summonerNameInput.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                lookupBtn.click();
-            }
+        [summonerNameInput, tagLineInput].forEach(input => {
+            input.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    lookupBtn.click();
+                }
+            });
         });
     });
     
