@@ -2,12 +2,70 @@
 
 A League of Legends champion mastery tracker that displays player statistics and top champions using the Riot Games API.
 
+🚀 **Live Demo**: [https://main.d1y7eioc5275a7.amplifyapp.com/](https://main.d1y7eioc5275a7.amplifyapp.com/)
+
 ## Project Overview
 
 This project consists of:
 - **Frontend**: HTML/CSS/JavaScript web interface for user interaction
 - **Backend**: AWS Lambda function that fetches player data from Riot Games API
 - **Integration**: Serverless architecture using AWS services
+
+## AWS Architecture
+
+### Architecture Diagram
+
+![AWS Architecture](./generated-diagrams/aws_architecture.png)
+
+### Architecture Components
+
+```
+┌─────────────────┐    ┌──────────────────┐    ┌─────────────────┐
+│   AWS Amplify   │    │   AWS Lambda     │    │ AWS Systems     │
+│  (Frontend)     │───▶│   (Backend)      │───▶│ Manager (SSM)   │
+│                 │    │                  │    │ Parameter Store │
+└─────────────────┘    └──────────────────┘    └─────────────────┘
+         │                       │                       │
+         │                       │                       │
+         ▼                       ▼                       ▼
+┌─────────────────┐    ┌──────────────────┐    ┌─────────────────┐
+│     Users       │    │   Riot Games     │    │   Secure API    │
+│   (Browser)     │    │      API         │    │   Key Storage   │
+└─────────────────┘    └──────────────────┘    └─────────────────┘
+```
+
+### Service Details
+
+**AWS Amplify**
+- Hosts static frontend (HTML/CSS/JS)
+- Provides HTTPS endpoint
+- Automatic deployments from Git
+
+**AWS Lambda**
+- Serverless Python function
+- Handles API requests from frontend
+- Fetches data from Riot Games API
+- Returns champion mastery data
+
+**AWS Systems Manager (SSM)**
+- Securely stores Riot API key
+- Encrypted parameter storage
+- Access controlled via IAM
+
+**Data Flow**
+1. User enters summoner info in web interface
+2. Frontend sends POST request to Lambda
+3. Lambda retrieves API key from SSM
+4. Lambda calls Riot Games API
+5. Lambda returns champion data to frontend
+6. Frontend displays player statistics
+
+### Security Features
+
+- API keys stored encrypted in SSM Parameter Store
+- Lambda function uses IAM roles for secure access
+- HTTPS encryption for all communications
+- No sensitive data stored in frontend code
 
 ## Prerequisites
 
